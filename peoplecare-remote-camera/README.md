@@ -93,12 +93,13 @@ Verificato **in questo ambiente** (Linux, Node 22.22.2, Flutter 3.47.5 / Dart 3.
 | App: sorgenti Kotlin (`scripts/check_android_sources.sh`) | app + RootEncoder 2.8.1 compilano (Kotlin 2.4.0) contro android-all API 36 e flutter.jar; 279 riferimenti a `android.*`, tutti API pubbliche dell'SDK di Android 16; 5 API successive a minSdk 26, tutte protette da controllo di versione. La verifica ha trovato e fatto correggere un errore reale (firma di `startRecord`) |
 | End-to-end locale (`tools/e2e/run_e2e.sh`) | Worker in `wrangler dev` + Control Room in Chromium + livello Dart reale del telefono: login, pairing con codice, camera online, START con ACK reale e LIVE, zoom, torcia (disabilitata sulla frontale), cambio camera, PAUSE/RESUME, stato Cloudflare dal polling, URL SRT per OBS, STOP, disconnessione. API Stream **simulata** e motore camera **simulato** (dichiarati in `tools/e2e/README.md`) |
 | Script `setup.sh`, `build_control_room.sh`, `test_all.sh --native`, `check_android_sources.sh` | eseguiti con successo |
+| **APK di debug** (CI GitHub, `.github/workflows/peoplecare-remote-camera.yml`) | `scripts/build_android.sh debug` su ubuntu-24.04 con JDK 17, Android SDK del runner e RootEncoder 2.8.1 da JitPack: `flutter analyze` e `flutter test` superati, `Running Gradle task 'assembleDebug'` → `✓ Built build/app/outputs/flutter-apk/app-debug.apk` (160 MB). Nella CI passano anche i job Worker/Control Room ed end-to-end |
 
 **Non verificato qui** (e perché):
 
 | Voce | Motivo | Come verificarla |
 | --- | --- | --- |
-| APK (`flutter build apk` / `./gradlew assembleDebug`) | la policy di rete di questo ambiente blocca `dl.google.com` (Android SDK e Google Maven, anche via maven.google.com) e `jitpack.io` (RootEncoder): `flutter build apk` si ferma con "No Android SDK found" | `scripts/build_android.sh` su un PC con accesso a quei domini, oppure il workflow `.github/workflows/peoplecare-remote-camera.yml` (artifact `peoplecare-remote-camera-debug-apk`) |
+| APK compilato *in questo ambiente* | la policy di rete blocca `dl.google.com` (Android SDK e Google Maven) e `jitpack.io` (RootEncoder); la build è stata quindi eseguita e verificata nella CI GitHub (riga sopra) | scaricare l'artifact `peoplecare-remote-camera-debug-apk` dal run del workflow, oppure `scripts/build_android.sh` su un PC |
 | Esecuzione su telefono reale (camera, encoder, SRT, servizio in foreground, termica) | nessun dispositivo | [TEST_PLAN.md](docs/TEST_PLAN.md) §2 |
 | Chiamate reali all'API Cloudflare Stream, webhook, player | nessuna credenziale (non vanno mai nel repository) | endpoint e campi seguono la documentazione ufficiale di Cloudflare Stream e i tipi dell'SDK ufficiale; collaudo con [CLOUDFLARE_SETUP.md](docs/CLOUDFLARE_SETUP.md) |
 | OBS che riceve l'SRT playback reale | nessun flusso reale | [OBS_SETUP.md](docs/OBS_SETUP.md); campi e opzioni verificati sul codice sorgente di OBS e FFmpeg |

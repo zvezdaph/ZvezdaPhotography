@@ -8,6 +8,9 @@ Si esegue con:
 scripts/check_android_sources.sh
 ```
 
+Richiede un **JDK 21 o superiore** (le classi di android-all API 36 sono compilate per
+Java 21; la build reale dell'APK funziona anche con il JDK 17).
+
 Cosa fa:
 
 1. scarica i sorgenti di **RootEncoder 2.8.1** (stesso tag usato dall'app) in `build/rootencoder-src`;

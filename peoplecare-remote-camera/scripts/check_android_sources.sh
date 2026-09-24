@@ -19,6 +19,11 @@ SRC="$ROOT/build/rootencoder-src"
 
 require_flutter
 for cmd in java javap python3 git curl; do require_cmd "$cmd" "necessario per la verifica"; done
+# android-all API 36 is compiled for Java 21 (class file version 65): javac 17 cannot read it.
+JAVA_BIN="${JAVA_HOME:+$JAVA_HOME/bin/}java"
+JAVA_MAJOR="$("$JAVA_BIN" -XshowSettings:properties -version 2>&1 | sed -n 's/^ *java.specification.version = //p')"
+[[ "${JAVA_MAJOR%%.*}" =~ ^[0-9]+$ && "${JAVA_MAJOR%%.*}" -ge 21 ]] ||
+  die "serve un JDK 21 o superiore per questa verifica (android-all API 36 è compilato per Java 21): trovato ${JAVA_MAJOR:-sconosciuto} in $JAVA_BIN"
 
 if [[ ! -d "$SRC/.git" ]]; then
   info "Scarico i sorgenti di RootEncoder $ROOTENCODER_TAG"

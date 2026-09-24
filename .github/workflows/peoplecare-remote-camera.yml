@@ -49,10 +49,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+      # JDK 17 (the last one, default) builds the APK; JDK 21 runs the source
+      # check, because android-all API 36 is compiled for Java 21.
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: |
+            21
+            17
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -63,13 +67,16 @@ jobs:
           # Optional repository variable: default control plane baked into the APK.
           CONTROL_PLANE_URL: ${{ vars.PCRC_CONTROL_PLANE_URL }}
         run: scripts/build_android.sh debug
-      - name: Kotlin sources (public SDK API and minSdk check)
-        run: scripts/check_android_sources.sh
       - uses: actions/upload-artifact@v4
         with:
           name: peoplecare-remote-camera-debug-apk
           path: peoplecare-remote-camera/dist/peoplecare-remote-camera-debug.apk
           if-no-files-found: error
+      - name: Kotlin sources (public SDK API and minSdk check, JDK 21)
+        run: |
+          export JAVA_HOME="$JAVA_HOME_21_X64"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          scripts/check_android_sources.sh
 
   e2e:
     name: Local end-to-end (wrangler dev + Chromium + phone Dart layer)
