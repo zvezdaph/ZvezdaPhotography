@@ -20,8 +20,12 @@ try {
     $tool = 'flutter'
     if ($step.Args[0] -eq 'format') { $tool = 'dart' }
     $stepArgs = $step.Args
+    # Solo il codice di uscita decide (vedi build_windows.ps1).
+    $ErrorActionPreference = 'Continue'
     & $tool @stepArgs
-    if ($LASTEXITCODE -ne 0) { throw "Controllo non superato: $($step.Title)" }
+    $exitCode = $LASTEXITCODE
+    $ErrorActionPreference = 'Stop'
+    if ($exitCode -ne 0) { throw "Controllo non superato: $($step.Title)" }
   }
   Write-Host ''
   Write-Host 'Tutti i controlli sono stati superati.' -ForegroundColor Green

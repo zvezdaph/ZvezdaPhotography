@@ -40,10 +40,13 @@ if ($Release) { $runArgs += '--release' }
 
 Push-Location (Split-Path -Parent $PSScriptRoot)
 try {
+  # Solo il codice di uscita decide (vedi build_windows.ps1).
+  $ErrorActionPreference = 'Continue'
   flutter pub get
   if ($LASTEXITCODE -ne 0) { throw 'flutter pub get non riuscito' }
   flutter @runArgs
 }
 finally {
+  $ErrorActionPreference = 'Stop'
   Pop-Location
 }

@@ -52,7 +52,17 @@ function Invoke-Step {
   param([string] $Title, [scriptblock] $Action)
   Write-Host ''
   Write-Host "==> $Title" -ForegroundColor Cyan
-  & $Action
+  # Windows PowerShell 5.1 trasforma in errori le righe che i comandi nativi
+  # scrivono su stderr quando l'output è rediretto (es. in CI): durante il
+  # comando vale solo il codice di uscita.
+  $previous = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    & $Action
+  }
+  finally {
+    $ErrorActionPreference = $previous
+  }
   if ($LASTEXITCODE -ne 0) {
     throw "Passo non riuscito: $Title (codice $LASTEXITCODE)"
   }
