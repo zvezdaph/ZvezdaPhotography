@@ -896,7 +896,7 @@ Tipi attesi e quando il sistema li genera:
 | `servizio_iniziato` | Avvio dall'app mobile | `info` |
 | `servizio_terminato` | Fine dall'app mobile | `info` |
 | `documento_ricevuto` | Documento inviato dall'app mobile | `info` |
-| `servizio_problematico` | Servizio non eseguito, avvio mancato oltre la tolleranza | `attenzione` / `critica` (oltre 30 minuti) |
+| `servizio_problematico` | Servizio non eseguito; servizio non ancora avviato 15 minuti dopo l'inizio programmato | `attenzione` / `critica` (ritardo oltre 30 minuti) |
 | `operativa` | Altre comunicazioni (es. operatore sospeso con servizi futuri) | variabile |
 
 I collegamenti `service_id`, `operator_id`, `change_request_id`,
@@ -1151,8 +1151,9 @@ che il sistema riceva da essa, e rifletta negli endpoint sopra, questi fatti:
 | Invio di un documento | Documento `source: operatore`, `requires_review: true`; notifica `documento_ricevuto`; registro `documento.ricevuto`; evento `documenti` |
 
 Inoltre il sistema genera la notifica `servizio_problematico` quando un
-servizio assegnato non è avviato oltre la tolleranza (10 minuti; `critica`
-oltre 30).
+servizio assegnato non è ancora avviato 15 minuti dopo l'inizio programmato
+(`critica` oltre 30 minuti). La dashboard del client segnala già l'anomalia
+"avvio in ritardo" dopo 10 minuti, calcolandola sui dati caricati.
 
 ## 17. Requisiti non funzionali attesi
 
