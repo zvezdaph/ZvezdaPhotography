@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- The Flutter tool needs it to communicate with Flutter while developing. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Debug builds only: allow http:// to a local `wrangler dev` control plane
+         (e.g. http://10.0.2.2:8787 from the emulator). Release builds are HTTPS/WSS only. -->
+    <application
+        android:usesCleartextTraffic="true"
+        tools:replace="android:usesCleartextTraffic" />
+</manifest>

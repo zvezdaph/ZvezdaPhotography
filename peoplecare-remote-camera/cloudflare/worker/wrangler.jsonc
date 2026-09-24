@@ -1,0 +1,71 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // PeopleCare Remote Camera - control plane + Control Room hosting.
+  // Secrets are NOT configured here. Set them with:
+  //   npx wrangler secret put CLOUDFLARE_ACCOUNT_ID
+  //   npx wrangler secret put CLOUDFLARE_API_TOKEN
+  //   npx wrangler secret put CONTROL_ROOM_PASSWORD
+  //   npx wrangler secret put STREAM_WEBHOOK_SECRET   (optional)
+  // For local development put them in .dev.vars (see .dev.vars.example).
+  "name": "peoplecare-remote-camera",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-15",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  // The Control Room (apps/control_room) is built into this directory and
+  // served as static assets. API and WebSocket routes always run the Worker.
+  "assets": {
+    "directory": "../../apps/control_room/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/ws/*"]
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "STUDIO",
+        "class_name": "StudioDurableObject"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["StudioDurableObject"]
+    }
+  ],
+  // Edge rate limit for the unauthenticated endpoints (login, pairing, webhook).
+  // namespace_id must be unique in your Cloudflare account.
+  "ratelimits": [
+    {
+      "name": "RL_PUBLIC",
+      "namespace_id": "4271",
+      "simple": {
+        "limit": 60,
+        "period": 60
+      }
+    }
+  ],
+  "vars": {
+    "APP_NAME": "PeopleCare Remote Camera",
+    "ALLOWED_ORIGINS": "",
+    "SESSION_TTL_HOURS": "12",
+    "PAIRING_TTL_MINUTES": "10",
+    "CLOUDFLARE_STREAM_CUSTOMER_CODE": "",
+    "STREAM_RECORDING_MODE": "automatic",
+    "STREAM_DELETE_RECORDING_AFTER_DAYS": "30",
+    "STREAM_PREFER_LOW_LATENCY": "false",
+    "STREAM_ALLOWED_ORIGINS": "",
+    "DEFAULT_RESOLUTION": "1080p",
+    "DEFAULT_FPS": "30",
+    "DEFAULT_VIDEO_BITRATE_KBPS": "5000",
+    "DEFAULT_AUDIO_BITRATE_KBPS": "128",
+    "SRT_LATENCY_MS": "500",
+    "REVOKE_ACTION": "rotate",
+    "CF_WATCHDOG": "true",
+    "CF_POLL_INTERVAL_SECONDS": "20",
+    "DO_LOCATION_HINT": "weur"
+  }
+}

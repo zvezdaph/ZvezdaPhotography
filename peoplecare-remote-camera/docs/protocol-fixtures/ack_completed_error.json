@@ -1,0 +1,10 @@
+{
+  "v": 1,
+  "type": "ack",
+  "commandId": "7d0c4f8a-1e2b-4a3c-8d9e-0f1a2b3c4d5e",
+  "stage": "completed",
+  "ok": false,
+  "result": null,
+  "error": { "code": "unsupported", "message": "Torcia non disponibile sulla camera frontale" },
+  "ts": 1790000000300
+}

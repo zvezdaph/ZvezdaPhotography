@@ -1,0 +1,10 @@
+{
+  "v": 1,
+  "type": "ack",
+  "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c",
+  "stage": "received",
+  "ok": true,
+  "result": null,
+  "error": null,
+  "ts": 1790000000200
+}
