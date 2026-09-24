@@ -1,12 +1,12 @@
 import { useMemo, useState } from "preact/hooks";
 import type { CameraView, EventView } from "../types";
-import { formatTime, slotLabel } from "../format";
+import { cameraTitle, formatTime } from "../format";
 
 export function EventLog(props: { events: EventView[]; title: string; cameras?: CameraView[]; limit?: number }) {
   const [level, setLevel] = useState<"all" | "warning" | "error">("all");
   const names = useMemo(() => {
     const map = new Map<string, string>();
-    for (const c of props.cameras ?? []) map.set(c.id, `${slotLabel(c.slot)} ${c.name}`);
+    for (const c of props.cameras ?? []) map.set(c.id, cameraTitle(c.slot, c.name));
     return map;
   }, [props.cameras]);
   const filtered = props.events

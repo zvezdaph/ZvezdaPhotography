@@ -6,6 +6,7 @@ import { useAppState, useServices, useTick } from "../context";
 import { connectionQuality, controlAvailability, tallyLabel, tallyState } from "../controls";
 import type { ControlAvailability } from "../controls";
 import {
+  cameraTitle,
   cloudflareLabel,
   commandLabel,
   formatAgo,
@@ -66,7 +67,7 @@ function CameraDetailView(props: { camera: CameraView; events: EventView[]; comm
           ← Dashboard
         </button>
         <div class="detail-title">
-          <span class="tile-slot">{slotLabel(camera.slot)}</span>
+          {cameraTitle(camera.slot, camera.name) === camera.name ? null : <span class="tile-slot">{slotLabel(camera.slot)}</span>}
           <h1>{camera.name}</h1>
           <Pill tone={tally === "live" ? "red" : tally === "offline" || tally === "ready" ? (camera.online ? "green" : "gray") : tally === "error" ? "red" : "amber"} pulse={tally === "live"}>
             {tally === "live" ? "● " : ""}

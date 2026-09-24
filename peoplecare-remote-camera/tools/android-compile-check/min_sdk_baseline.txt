@@ -1,0 +1,8 @@
+// Reviewed app references to APIs newer than minSdk 26 (Android 8.0).
+// Format: <type>#<member>(<params>) -- <file>: <guard>
+// check_public_api.py fails on any newer-API reference that is not listed here.
+android.app.Activity#getDisplay() -- MainActivity.kt: SDK_INT >= R, else WindowManager.defaultDisplay
+android.app.Notification.Builder#setForegroundServiceBehavior(int) -- Notifications.kt: SDK_INT >= S
+android.app.Service#startForeground(int, android.app.Notification, int) -- StreamingService.kt: SDK_INT >= Q, else startForeground(int, Notification)
+android.hardware.camera2.CameraCharacteristics#CONTROL_ZOOM_RATIO_RANGE -- CapabilityProbe.kt: SDK_INT >= R, else SCALER_AVAILABLE_MAX_DIGITAL_ZOOM
+android.os.PowerManager#getCurrentThermalStatus() -- DeviceMonitor.kt: SDK_INT < Q returns null

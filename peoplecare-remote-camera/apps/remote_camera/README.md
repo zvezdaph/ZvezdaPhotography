@@ -1,17 +1,16 @@
-# remote_camera
+# PeopleCare Remote Camera — app Android
 
-PeopleCare Remote Camera - Android remote camera for live production
+App Flutter con motore nativo Kotlin (RootEncoder 2.8.1): camera, anteprima, codifica
+H.264/AAC e trasmissione SRT/RTMPS verso Cloudflare Stream, controllata dalla regia tramite
+il Worker Cloudflare.
 
-## Getting Started
+- Compilazione, installazione e uso: [docs/ANDROID_SETUP.md](../../docs/ANDROID_SETUP.md)
+- Associazione alla regia: [docs/PAIRING.md](../../docs/PAIRING.md)
+- Architettura del codice: [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+flutter analyze
+flutter test
+flutter build apk --debug --dart-define=CONTROL_PLANE_URL=https://<worker>.<sottodominio>.workers.dev
+```

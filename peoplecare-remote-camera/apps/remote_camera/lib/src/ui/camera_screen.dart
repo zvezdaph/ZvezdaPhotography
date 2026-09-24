@@ -323,7 +323,7 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
       ),
       _ToolButton(
         icon: Icons.fiber_manual_record,
-        label: s.recording ? 'REC ON' : 'REC OFF',
+        label: s.recording ? 'BACKUP ON' : 'BACKUP OFF',
         active: s.recording,
         onPressed: ready && app.capabilities.recording ? () => _toggleRecording() : null,
       ),

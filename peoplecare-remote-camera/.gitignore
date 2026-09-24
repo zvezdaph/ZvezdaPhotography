@@ -5,6 +5,8 @@ build/
 coverage/
 .dart_tool/
 .wrangler/
+.gradle/
+.kotlin/
 *.log
 
 # Local configuration and secrets (never commit real credentials)

@@ -2,6 +2,12 @@ export function slotLabel(slot: number): string {
   return `CAM ${String(slot).padStart(2, "0")}`;
 }
 
+/** "CAM 01 - SALA" stays as is; a name without the slot gets it as prefix ("CAM 02 Palco"). */
+export function cameraTitle(slot: number, name: string): string {
+  const label = slotLabel(slot);
+  return name.toUpperCase().startsWith(label) ? name : `${label} ${name}`;
+}
+
 export function formatKbps(kbps: number | null | undefined): string {
   if (kbps === null || kbps === undefined || !Number.isFinite(kbps)) return "—";
   if (kbps >= 1000) return `${(kbps / 1000).toFixed(kbps >= 10_000 ? 0 : 1)} Mbps`;

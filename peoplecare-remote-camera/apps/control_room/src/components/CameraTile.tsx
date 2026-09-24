@@ -1,6 +1,6 @@
 import type { CameraView } from "../types";
 import { connectionQuality, tallyLabel, tallyState } from "../controls";
-import { cloudflareLabel, formatKbps, networkLabel, slotLabel } from "../format";
+import { cameraTitle, cloudflareLabel, formatKbps, networkLabel, slotLabel } from "../format";
 import { Dot, Pill } from "./common";
 
 export function batteryText(camera: CameraView): string {
@@ -17,7 +17,7 @@ export function CameraTile(props: { camera: CameraView; onOpen: () => void }) {
   const quality = connectionQuality(camera);
   const cf = camera.cloudflare.state;
   return (
-    <button type="button" class={`tile tally-${tally}`} onClick={props.onOpen} aria-label={`${slotLabel(camera.slot)} ${camera.name}`}>
+    <button type="button" class={`tile tally-${tally}`} onClick={props.onOpen} aria-label={cameraTitle(camera.slot, camera.name)}>
       <div class="tile-top">
         <span class="tile-slot">{slotLabel(camera.slot)}</span>
         <Pill tone={tally === "live" ? "red" : tally === "reconnecting" || tally === "paused" || tally === "connecting" ? "amber" : tally === "error" ? "red" : tally === "offline" ? "gray" : "green"} pulse={tally === "live"}>

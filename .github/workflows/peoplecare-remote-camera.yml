@@ -1,0 +1,98 @@
+# PeopleCare Remote Camera: tests of every component, local end-to-end check
+# and the Android debug APK (downloadable from the run's artifacts).
+name: PeopleCare Remote Camera
+
+on:
+  push:
+    paths:
+      - "peoplecare-remote-camera/**"
+      - ".github/workflows/peoplecare-remote-camera.yml"
+  pull_request:
+    paths:
+      - "peoplecare-remote-camera/**"
+      - ".github/workflows/peoplecare-remote-camera.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: peoplecare-remote-camera-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+    working-directory: peoplecare-remote-camera
+
+jobs:
+  worker:
+    name: Worker and Control Room
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Control Room (typecheck, test, build)
+        run: scripts/build_control_room.sh
+      - name: Worker (typecheck, test, wrangler dry run)
+        working-directory: peoplecare-remote-camera/cloudflare/worker
+        run: |
+          npm ci --no-audit --no-fund
+          npm run typecheck
+          npm test
+          npx wrangler deploy --dry-run --outdir dist
+
+  android:
+    name: Android debug APK
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+      - name: Analyze, test and build the APK
+        env:
+          # Optional repository variable: default control plane baked into the APK.
+          CONTROL_PLANE_URL: ${{ vars.PCRC_CONTROL_PLANE_URL }}
+        run: scripts/build_android.sh debug
+      - name: Kotlin sources (public SDK API and minSdk check)
+        run: scripts/check_android_sources.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: peoplecare-remote-camera-debug-apk
+          path: peoplecare-remote-camera/dist/peoplecare-remote-camera-debug.apk
+          if-no-files-found: error
+
+  e2e:
+    name: Local end-to-end (wrangler dev + Chromium + phone Dart layer)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+      - name: Chromium for Playwright
+        working-directory: peoplecare-remote-camera/tools/e2e
+        run: |
+          npm ci --no-audit --no-fund
+          npx -y playwright@1.56.1 install --with-deps chromium
+      - name: End-to-end
+        run: tools/e2e/run_e2e.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-screenshots
+          path: peoplecare-remote-camera/build/e2e/

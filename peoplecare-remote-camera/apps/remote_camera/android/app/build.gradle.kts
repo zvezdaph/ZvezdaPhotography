@@ -49,7 +49,17 @@ flutter {
     source = "../.."
 }
 
+// JitPack publishes RootEncoder as com.github.pedroSG94.RootEncoder:<module>. A local
+// build from source (scripts/build_rootencoder_from_source.sh, passed with
+// ORG_GRADLE_PROJECT_rootEncoderMavenRepo=<dir>) keeps the upstream group com.github.pedroSG94.
+val rootEncoderGroup: String =
+    if (providers.gradleProperty("rootEncoderMavenRepo").orNull.isNullOrBlank()) {
+        "com.github.pedroSG94.RootEncoder"
+    } else {
+        "com.github.pedroSG94"
+    }
+
 dependencies {
     // Camera, preview, H.264/AAC MediaCodec encoding, SRT and RTMPS in one engine.
-    implementation("com.github.pedroSG94.RootEncoder:library:$rootEncoderVersion")
+    implementation("$rootEncoderGroup:library:$rootEncoderVersion")
 }
