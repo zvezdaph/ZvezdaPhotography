@@ -1,0 +1,62 @@
+# PeopleCare Central Operations (Flutter Desktop per Windows): formattazione,
+# analisi statica e test su Linux, poi build release Windows x64 scaricabile
+# dagli artefatti dell'esecuzione.
+name: PeopleCare Central Operations
+
+on:
+  push:
+    paths:
+      - "peoplecare-central-operations/**"
+      - ".github/workflows/peoplecare-central-operations.yml"
+  pull_request:
+    paths:
+      - "peoplecare-central-operations/**"
+      - ".github/workflows/peoplecare-central-operations.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: peoplecare-central-operations-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: peoplecare-central-operations
+
+jobs:
+  checks:
+    name: Format, analyze, test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+      - name: Format, analyze and test
+        shell: bash
+        run: scripts/check.sh
+
+  windows:
+    name: Windows x64 release
+    needs: checks
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+      # Windows PowerShell 5.1, come sulle postazioni degli sviluppatori.
+      - name: Build and package (demo data)
+        shell: powershell
+        run: .\scripts\build_windows.ps1 -SkipChecks -BuildNumber ${{ github.run_number }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: peoplecare-central-operations-windows-x64
+          path: peoplecare-central-operations/dist/*.zip
+          if-no-files-found: error

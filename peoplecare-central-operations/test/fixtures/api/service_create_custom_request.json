@@ -1,0 +1,18 @@
+{
+  "service_type_id": null,
+  "custom_type_name": "Consegna ausili e verifica domicilio",
+  "scheduled_start": "2026-09-26T12:00:00Z",
+  "scheduled_end": "2026-09-26T13:00:00Z",
+  "patient_id": null,
+  "manual_patient": {
+    "first_name": "Giovanni",
+    "last_name": "Cortinovis"
+  },
+  "facility_id": "str-000001",
+  "operator_id": null,
+  "priority": "normale",
+  "address": "Via Borgo Palazzo 74, Seriate",
+  "phone": null,
+  "directions": null,
+  "notes": null
+}

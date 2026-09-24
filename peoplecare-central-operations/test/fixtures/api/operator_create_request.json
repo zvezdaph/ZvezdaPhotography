@@ -1,0 +1,12 @@
+{
+  "first_name": "Giulia",
+  "last_name": "Ferrari",
+  "email": "giulia.ferrari@peoplecare.example",
+  "phone": "+39 333 000 0215",
+  "qualification": "OSS",
+  "primary_facility_id": "str-000001",
+  "secondary_facility_ids": [
+    "str-000002"
+  ],
+  "notes": null
+}

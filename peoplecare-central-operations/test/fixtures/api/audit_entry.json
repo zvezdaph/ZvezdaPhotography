@@ -1,0 +1,31 @@
+{
+  "id": "aud-120455",
+  "occurred_at": "2026-09-24T07:10:00Z",
+  "actor": {
+    "kind": "centrale",
+    "name": "Laura Bianchi",
+    "id": "usr-000017"
+  },
+  "action": "servizio.riprogrammato",
+  "entity": {
+    "type": "servizio",
+    "id": "srv-004812",
+    "label": "SRV-2026-004812"
+  },
+  "summary": "Riprogrammato dal 25/09/2026 10:30 al 25/09/2026 11:00 - motivo: Richiesta di modifica RM-000321.",
+  "changes": [
+    {
+      "field": "scheduled_start",
+      "label": "Inizio programmato",
+      "old_value": "25/09/2026 10:30",
+      "new_value": "25/09/2026 11:00"
+    },
+    {
+      "field": "scheduled_end",
+      "label": "Fine programmata",
+      "old_value": "25/09/2026 11:00",
+      "new_value": "25/09/2026 11:30"
+    }
+  ],
+  "service_id": "srv-004812"
+}

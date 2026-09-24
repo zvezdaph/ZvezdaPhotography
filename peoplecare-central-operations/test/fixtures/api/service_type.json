@@ -1,0 +1,13 @@
+{
+  "id": "ts-000004",
+  "code": "TS-04",
+  "name": "Medicazione",
+  "category": "Sanitaria",
+  "default_duration_minutes": 30,
+  "required_qualifications": [
+    "Infermiere"
+  ],
+  "description": "Medicazione semplice o avanzata di lesioni cutanee.",
+  "is_active": true,
+  "version": 1
+}

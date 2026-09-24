@@ -1,0 +1,28 @@
+{
+  "id": "rm-000321",
+  "code": "RM-000321",
+  "service_id": "srv-004812",
+  "service_code": "SRV-2026-004812",
+  "operator_id": "opr-000184",
+  "operator_name": "Anna Mariani",
+  "reason": "problema_orario",
+  "message": "La paziente ha una visita alle 8:30 e mi chiede di passare più tardi.",
+  "proposed_start": "2026-09-25T09:00:00Z",
+  "proposed_end": "2026-09-25T09:30:00Z",
+  "status": "in_lavorazione",
+  "created_at": "2026-09-24T06:40:00Z",
+  "updated_at": "2026-09-24T07:02:00Z",
+  "messages": [
+    {
+      "id": "msg-000877",
+      "author_kind": "centrale",
+      "author_name": "Laura Bianchi",
+      "text": "Verifico con la famiglia e ti aggiorno entro le 10.",
+      "sent_at": "2026-09-24T07:02:00Z"
+    }
+  ],
+  "outcome": null,
+  "closed_at": null,
+  "closed_by": null,
+  "version": 2
+}

@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "operation_not_allowed",
+    "message": "Il servizio è già stato avviato o concluso: resta nello storico."
+  }
+}

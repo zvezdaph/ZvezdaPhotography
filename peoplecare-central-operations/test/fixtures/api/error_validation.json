@@ -1,0 +1,10 @@
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Controlla i dati del servizio.",
+    "field_errors": {
+      "scheduled_end": "L'ora di fine deve essere successiva all'ora di inizio.",
+      "address": "Indica l'indirizzo."
+    }
+  }
+}

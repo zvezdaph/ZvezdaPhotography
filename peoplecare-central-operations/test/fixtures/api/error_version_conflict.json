@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "version_conflict",
+    "message": "Il servizio è stato modificato da un altro utente. Ricarica e riprova."
+  }
+}

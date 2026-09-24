@@ -1,0 +1,20 @@
+{
+  "id": "doc-002231",
+  "title": "Foglio firma presenza",
+  "file_name": "foglio_firma_SRV-2026-004812.jpg",
+  "mime_type": "image/jpeg",
+  "size_bytes": 482133,
+  "category": "foglio_firma",
+  "owner": {
+    "type": "servizio",
+    "id": "srv-004812",
+    "label": "SRV-2026-004812 - Rosa Ravasio"
+  },
+  "source": "operatore",
+  "uploaded_by": "Anna Mariani",
+  "uploaded_at": "2026-09-24T08:02:00Z",
+  "description": null,
+  "requires_review": true,
+  "reviewed_at": null,
+  "reviewed_by": null
+}

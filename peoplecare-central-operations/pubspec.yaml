@@ -1,0 +1,30 @@
+name: peoplecare_central_operations
+description: "PeopleCare Central Operations - pannello operativo desktop della Centrale Operativa PeopleCare (Windows)."
+publish_to: 'none'
+
+# Su Windows build-name diventa FileVersion/ProductVersion dell'eseguibile,
+# build-number il suffisso di build.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Localizzazione italiana dei widget Material (date picker, time picker, ...).
+  flutter_localizations:
+    sdk: flutter
+  # Formattazione di date e numeri in italiano.
+  intl: ^0.20.3
+  # Finestre di dialogo native di Windows per scegliere/salvare file
+  # (allegati, download documenti, esportazioni CSV).
+  file_selector: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

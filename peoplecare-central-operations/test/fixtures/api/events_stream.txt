@@ -1,0 +1,16 @@
+: connesso
+
+id: 88121
+event: operational_event
+data: {"topic":"servizi","entity_id":"srv-004812","occurred_at":"2026-09-24T07:34:00Z"}
+
+id: 88122
+event: notification
+data: {"id":"ntf-018843","type":"servizio_iniziato","severity":"info","title":"Servizio iniziato","message":"Anna Mariani ha iniziato Medicazione presso Rosa Ravasio alle 09:34.","created_at":"2026-09-24T07:34:01Z","read_at":null,"service_id":"srv-004812","operator_id":"opr-000184","change_request_id":null,"document_id":null}
+
+: ping
+
+id: 88123
+event: operational_event
+data: {"topic":"argomento_futuro","entity_id":null,"occurred_at":"2026-09-24T07:35:00Z"}
+

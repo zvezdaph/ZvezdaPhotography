@@ -1,0 +1,13 @@
+{
+  "id": "str-000002",
+  "code": "STR-02",
+  "name": "Centro Diurno Arcobaleno",
+  "kind": "centro_diurno",
+  "address": "Via Roma 45",
+  "city": "Seriate",
+  "phone": "+39 035 000 1202",
+  "email": "arcobaleno@peoplecare.example",
+  "is_active": true,
+  "notes": null,
+  "version": 3
+}

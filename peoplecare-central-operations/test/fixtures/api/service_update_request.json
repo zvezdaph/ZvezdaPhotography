@@ -1,0 +1,16 @@
+{
+  "service_type_id": "ts-000004",
+  "custom_type_name": null,
+  "scheduled_start": "2026-09-25T09:00:00Z",
+  "scheduled_end": "2026-09-25T09:30:00Z",
+  "patient_id": "pz-004512",
+  "manual_patient": null,
+  "facility_id": "str-000003",
+  "operator_id": "opr-000184",
+  "priority": "alta",
+  "address": "Via Tasso 76, Bergamo",
+  "phone": "+39 035 000 4512",
+  "directions": "Citofono Ravasio R., secondo piano senza ascensore.",
+  "notes": "Controllare la medicazione al tallone sinistro.",
+  "expected_version": 4
+}

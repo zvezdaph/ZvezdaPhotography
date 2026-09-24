@@ -1,0 +1,98 @@
+{
+  "period": {
+    "from": "2026-09-20T22:00:00Z",
+    "to": "2026-09-22T22:00:00Z"
+  },
+  "facility_id": null,
+  "generated_at": "2026-09-24T08:00:00Z",
+  "total_services": 5,
+  "by_status": {
+    "da_assegnare": 0,
+    "assegnato": 0,
+    "in_corso": 0,
+    "completato": 3,
+    "annullato": 1,
+    "non_eseguito": 1,
+    "da_riprogrammare": 0
+  },
+  "started_services": 3,
+  "on_time_starts": 2,
+  "on_time_tolerance_minutes": 10,
+  "average_start_delay_minutes": 6.5,
+  "scheduled_minutes": 240,
+  "delivered_minutes": 175,
+  "change_request_count": 1,
+  "change_requests_by_reason": {
+    "problema_orario": 1,
+    "sovrapposizione": 0,
+    "indisponibilita": 0,
+    "problema_logistico": 0,
+    "imprevisto": 0,
+    "altro": 0
+  },
+  "daily": [
+    {
+      "date": "2026-09-21",
+      "by_status": {
+        "da_assegnare": 0,
+        "assegnato": 0,
+        "in_corso": 0,
+        "completato": 2,
+        "annullato": 1,
+        "non_eseguito": 0,
+        "da_riprogrammare": 0
+      }
+    },
+    {
+      "date": "2026-09-22",
+      "by_status": {
+        "da_assegnare": 0,
+        "assegnato": 0,
+        "in_corso": 0,
+        "completato": 1,
+        "annullato": 0,
+        "non_eseguito": 1,
+        "da_riprogrammare": 0
+      }
+    }
+  ],
+  "operators": [
+    {
+      "operator_id": "opr-000184",
+      "operator_name": "Anna Mariani",
+      "operator_code": "OP-000184",
+      "total_services": 4,
+      "completed": 3,
+      "not_executed": 1,
+      "cancelled": 0,
+      "scheduled_minutes": 210,
+      "delivered_minutes": 175,
+      "average_start_delay_minutes": 6.5
+    }
+  ],
+  "service_types": [
+    {
+      "label": "Medicazione",
+      "service_type_id": "ts-000004",
+      "total_services": 4,
+      "completed": 3,
+      "delivered_minutes": 175
+    },
+    {
+      "label": "Servizi personalizzati",
+      "service_type_id": null,
+      "total_services": 1,
+      "completed": 0,
+      "delivered_minutes": 0
+    }
+  ],
+  "facilities": [
+    {
+      "facility_id": "str-000003",
+      "facility_name": "Servizio Domiciliare Bergamo Nord",
+      "total_services": 5,
+      "completed": 3,
+      "delivered_minutes": 175
+    }
+  ]
+}

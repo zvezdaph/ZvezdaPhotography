@@ -1,0 +1,13 @@
+{
+  "id": "ntf-018842",
+  "type": "richiesta_modifica",
+  "severity": "attenzione",
+  "title": "Nuova richiesta di modifica",
+  "message": "Anna Mariani - problema di orario su SRV-2026-004812 (25/09/2026 10:30).",
+  "created_at": "2026-09-24T06:40:05Z",
+  "read_at": null,
+  "service_id": "srv-004812",
+  "operator_id": "opr-000184",
+  "change_request_id": "rm-000321",
+  "document_id": null
+}
