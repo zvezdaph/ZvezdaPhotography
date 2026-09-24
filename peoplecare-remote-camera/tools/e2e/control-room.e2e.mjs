@@ -108,6 +108,8 @@ try {
   }
   log(`OBS URL shown (passphrase masked): ${obsUrl}`);
   await sleep(11_000); // one Cloudflare poll (CF_POLL_INTERVAL_SECONDS=10)
+  // Full-page screenshots: keep the sticky top bar at the top of the image.
+  await page.addStyleTag({ content: ".topbar { position: static !important; }" });
   await page.screenshot({ path: `${shots}/03-camera-live.png`, fullPage: true });
 
   // 7. STOP
