@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "type": "command",
+  "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c",
+  "seq": 42,
+  "command": "set_zoom",
+  "value": 2.5,
+  "issuedAt": 1790000000000,
+  "sentAt": 1790000000150,
+  "expiresAt": 1790000015150,
+  "issuedBy": "Regia"
+}

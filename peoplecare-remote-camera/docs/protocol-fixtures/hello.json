@@ -1,0 +1,51 @@
+{
+  "v": 1,
+  "type": "hello",
+  "device": { "model": "Pixel 9", "appVersion": "1.0.0", "osVersion": "Android 16 (API 36)" },
+  "capabilities": {
+    "facings": {
+      "back": {
+        "available": true,
+        "zoom": { "supported": true, "min": 1.0, "max": 8.0 },
+        "torch": true,
+        "autofocus": true,
+        "focusPoint": true,
+        "exposure": { "supported": true, "min": -12, "max": 12, "step": 0.1667 },
+        "fps": { "720p": [25, 30, 60], "1080p": [25, 30, 60] }
+      },
+      "front": {
+        "available": true,
+        "zoom": { "supported": true, "min": 1.0, "max": 4.0 },
+        "torch": false,
+        "autofocus": false,
+        "focusPoint": false,
+        "exposure": { "supported": true, "min": -12, "max": 12, "step": 0.1667 },
+        "fps": { "720p": [25, 30], "1080p": [25, 30] }
+      }
+    },
+    "resolutions": ["720p", "1080p"],
+    "recording": true,
+    "protocols": ["srt", "rtmps"],
+    "maxBitrateKbps": 12000
+  },
+  "state": {
+    "cameraStatus": "ready",
+    "streamStatus": "idle",
+    "paused": false,
+    "facing": "back",
+    "zoom": 1.0,
+    "torch": false,
+    "autofocus": true,
+    "exposure": 0,
+    "videoEnabled": true,
+    "audioEnabled": true,
+    "recording": false,
+    "resolution": "1080p",
+    "fps": 30,
+    "bitrateMode": "auto",
+    "targetBitrateKbps": 5000,
+    "protocol": "srt",
+    "orientation": "landscape",
+    "lastError": null
+  }
+}

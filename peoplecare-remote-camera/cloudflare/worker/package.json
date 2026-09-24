@@ -1,0 +1,26 @@
+{
+  "name": "peoplecare-remote-camera-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PeopleCare Remote Camera - Cloudflare Worker + Durable Object control plane",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "dry-run": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p test/tsconfig.json",
+    "test": "vitest run --max-workers=1 --no-isolate",
+    "types": "wrangler types --include-env=false",
+    "check": "npm run typecheck && npm run test && npm run dry-run"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.2.4",
+    "@cloudflare/workers-types": "5.20260924.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11",
+    "wrangler": "4.137.0"
+  }
+}

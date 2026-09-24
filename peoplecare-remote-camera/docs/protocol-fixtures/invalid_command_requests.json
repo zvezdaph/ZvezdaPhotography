@@ -1,0 +1,11 @@
+[
+  { "reason": "wrong version", "message": { "v": 2, "type": "command", "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "pause", "issuedAt": 1790000000000 } },
+  { "reason": "unknown command", "message": { "v": 1, "type": "command", "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "self_destruct", "issuedAt": 1790000000000 } },
+  { "reason": "short command id", "message": { "v": 1, "type": "command", "commandId": "abc", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "pause", "issuedAt": 1790000000000 } },
+  { "reason": "stale timestamp", "message": { "v": 1, "type": "command", "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "pause", "issuedAt": 1789000000000 } },
+  { "reason": "zoom not a number", "message": { "v": 1, "type": "command", "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "set_zoom", "value": "2x", "issuedAt": 1790000000000 } },
+  { "reason": "focus point out of range", "message": { "v": 1, "type": "command", "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "focus_point", "value": { "x": 1.5, "y": 0.2 }, "issuedAt": 1790000000000 } },
+  { "reason": "bitrate too high", "message": { "v": 1, "type": "command", "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "set_bitrate", "value": { "mode": "manual", "kbps": 50000 }, "issuedAt": 1790000000000 } },
+  { "reason": "unsupported fps", "message": { "v": 1, "type": "command", "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "set_fps", "value": 24, "issuedAt": 1790000000000 } },
+  { "reason": "value on start_stream", "message": { "v": 1, "type": "command", "commandId": "3f1c2a9e-5b7d-4c1e-9a2b-6d8e0f1a2b3c", "cameraId": "cam_0a1b2c3d4e5f6a7b", "command": "start_stream", "value": true, "issuedAt": 1790000000000 } }
+]

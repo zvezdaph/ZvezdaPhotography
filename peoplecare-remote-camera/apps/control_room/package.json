@@ -1,0 +1,26 @@
+{
+  "name": "peoplecare-control-room",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PeopleCare Remote Camera - Control Room (regia) web app",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "jsqr": "1.4.0",
+    "preact": "10.29.8"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vite": "7.3.6",
+    "vitest": "4.1.11"
+  }
+}

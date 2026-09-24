@@ -1,0 +1,28 @@
+{
+  "v": 1,
+  "type": "telemetry",
+  "telemetry": {
+    "ts": 1790000002000,
+    "streamStatus": "live",
+    "network": { "type": "cellular", "metered": true, "validated": true, "uplinkKbps": 18000 },
+    "bitrateKbps": 4870,
+    "uploadKbps": 5010,
+    "queuePercent": 2.5,
+    "fps": 30,
+    "resolution": "1920x1080",
+    "battery": { "percent": 81, "charging": true, "temperatureC": 36.4 },
+    "thermal": "none",
+    "facing": "back",
+    "zoom": 2.5,
+    "torch": false,
+    "micEnabled": true,
+    "videoEnabled": true,
+    "audioEnabled": true,
+    "uptimeSec": 754,
+    "reconnects": 1,
+    "recentErrors": [
+      { "ts": 1790000001000, "code": "srt_disconnected", "message": "Rete cambiata: Wi-Fi -> 4G" }
+    ],
+    "recording": { "active": false, "freeBytes": 25000000000 }
+  }
+}

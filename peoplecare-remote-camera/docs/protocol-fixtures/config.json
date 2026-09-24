@@ -1,0 +1,30 @@
+{
+  "v": 1,
+  "type": "config",
+  "error": null,
+  "config": {
+    "cameraId": "cam_0a1b2c3d4e5f6a7b",
+    "cameraName": "CAM 01 - SALA",
+    "protocol": "srt",
+    "url": "srt://live.example.invalid:778",
+    "host": "live.example.invalid",
+    "port": 778,
+    "streamId": "0123456789abcdef0123456789abcdef",
+    "passphrase": "fixture-passphrase-not-a-secret",
+    "fallback": {
+      "protocol": "rtmps",
+      "url": "rtmps://live.example.invalid:443/live/",
+      "host": "live.example.invalid",
+      "port": 443,
+      "streamKey": "fixture-stream-key-not-a-secret"
+    },
+    "resolution": "1080p",
+    "fps": 30,
+    "videoBitrateKbps": 5000,
+    "audioBitrateKbps": 128,
+    "bitrateMode": "auto",
+    "keyframeIntervalSec": 2,
+    "srtLatencyMs": 500,
+    "issuedAt": 1790000000000
+  }
+}

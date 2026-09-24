@@ -1,0 +1,27 @@
+# Dependencies and build outputs
+node_modules/
+dist/
+build/
+coverage/
+.dart_tool/
+.wrangler/
+.gradle/
+.kotlin/
+*.log
+
+# Local configuration and secrets (never commit real credentials)
+.env
+.env.*
+!.env.example
+.dev.vars
+!.dev.vars.example
+local.properties
+key.properties
+*.keystore
+*.jks
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
