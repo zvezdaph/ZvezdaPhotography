@@ -4,15 +4,18 @@ Trasforma un telefono Android in una **camera remota professionale** per la regi
 PeopleCareTV:
 
 ```
-APP ANDROID ──SRT (fallback RTMPS)──► CLOUDFLARE STREAM LIVE INPUT ──SRT PLAYBACK──► OBS STUDIO (Ubuntu)
-                                                 └──HLS / LL-HLS──► anteprima nella CONTROL ROOM
+APP ANDROID ──LiveKit/WebRTC──► PRE-LIVE REALTIME nella CONTROL ROOM
+      │
+      └── START: handoff camera ──SRT (fallback RTMPS)──► CLOUDFLARE STREAM ──SRT──► OBS
+                                                           └──HLS/LL-HLS──► verifica uscita PROGRAM
 
 CONTROL ROOM (PC, Chrome) ──WSS──► CLOUDFLARE WORKER + DURABLE OBJECT ◄──WSS── APP ANDROID
 ```
 
 - **Nessuna rete locale**, IP pubblico, port forwarding, Tailscale o VPN: telefono e regia
   si parlano solo tramite Cloudflare.
-- **Un solo motore** sul telefono (RootEncoder 2.8.1, nativo Kotlin) per camera, anteprima,
+- **Handoff della camera**: LiveKit possiede la camera in PRE-LIVE; con START la rilascia a RootEncoder/SRT; con STOP torna al PRE-LIVE.
+- **Motore PROGRAM** sul telefono (RootEncoder 2.8.1, nativo Kotlin) per camera, anteprima,
   codifica H.264/AAC con MediaCodec e trasmissione SRT/RTMPS; Flutter per l'interfaccia.
 - **Comandi remoti con ACK reali** (ricevuto/completato/errore), controlli abilitati solo se
   l'hardware li supporta, telemetria in tempo reale.
