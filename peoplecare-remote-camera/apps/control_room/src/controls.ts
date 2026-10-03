@@ -45,6 +45,7 @@ export function controlAvailability(camera: CameraView): ControlAvailability {
   const facingCaps = currentFacingCaps(camera);
   const status = state?.streamStatus ?? "idle";
   const cameraReady = state?.cameraStatus === "ready";
+  const realtimePreview = state?.previewMode === "realtime";
   const streaming = status === "connecting" || status === "live" || status === "reconnecting";
   const reasons: Partial<Record<string, string>> = {};
   if (!online) reasons.all = "Telefono non connesso alla regia";
@@ -59,6 +60,14 @@ export function controlAvailability(camera: CameraView): ControlAvailability {
   if (known && !facingCaps?.exposure.supported) reasons.exposure = "Esposizione non regolabile";
   if (known && !facingCaps?.zoom.supported) reasons.zoom = "Zoom non supportato";
   if (known && !caps?.recording) reasons.record = "Registrazione locale non disponibile";
+  if (realtimePreview) {
+    const liveOnly = "Disponibile dopo START, quando la camera passa alla pipeline SRT";
+    reasons.zoom = liveOnly;
+    reasons.torch = liveOnly;
+    reasons.focusPoint = liveOnly;
+    reasons.exposure = liveOnly;
+    reasons.record = liveOnly;
+  }
 
   return {
     online,
@@ -71,30 +80,30 @@ export function controlAvailability(camera: CameraView): ControlAvailability {
     front: known && Boolean(caps?.facings.front?.available) && state?.facing !== "front",
     back: known && Boolean(caps?.facings.back?.available) && state?.facing !== "back",
     zoom: {
-      enabled: known && Boolean(facingCaps?.zoom.supported) && (facingCaps?.zoom.max ?? 1) > (facingCaps?.zoom.min ?? 1),
+      enabled: known && !realtimePreview && Boolean(facingCaps?.zoom.supported) && (facingCaps?.zoom.max ?? 1) > (facingCaps?.zoom.min ?? 1),
       min: facingCaps?.zoom.min ?? 1,
       max: facingCaps?.zoom.max ?? 1,
       value: state?.zoom ?? 1,
     },
-    torch: known && Boolean(facingCaps?.torch),
-    autofocus: known && Boolean(facingCaps?.autofocus),
-    focusPoint: known && Boolean(facingCaps?.focusPoint),
+    torch: known && !realtimePreview && Boolean(facingCaps?.torch),
+    autofocus: known && !realtimePreview && Boolean(facingCaps?.autofocus),
+    focusPoint: known && !realtimePreview && Boolean(facingCaps?.focusPoint),
     exposure: {
-      enabled: known && Boolean(facingCaps?.exposure.supported) && (facingCaps?.exposure.max ?? 0) > (facingCaps?.exposure.min ?? 0),
+      enabled: known && !realtimePreview && Boolean(facingCaps?.exposure.supported) && (facingCaps?.exposure.max ?? 0) > (facingCaps?.exposure.min ?? 0),
       min: facingCaps?.exposure.min ?? 0,
       max: facingCaps?.exposure.max ?? 0,
       step: facingCaps?.exposure.step ?? 0,
       value: state?.exposure ?? 0,
     },
-    mic: known,
-    video: known,
+    mic: known && !realtimePreview,
+    video: known && !realtimePreview,
     resolutions: (["720p", "1080p"] as const).map((value) => ({
       value,
-      enabled: known && Boolean(caps?.resolutions.includes(value)),
+      enabled: known && !realtimePreview && Boolean(caps?.resolutions.includes(value)),
     })),
-    fps: ALL_FPS.map((value) => ({ value, enabled: known && fpsSupported.includes(value) })),
-    bitrate: known,
-    record: known && Boolean(caps?.recording),
+    fps: ALL_FPS.map((value) => ({ value, enabled: known && !realtimePreview && fpsSupported.includes(value) })),
+    bitrate: known && !realtimePreview,
+    record: known && !realtimePreview && Boolean(caps?.recording),
     reasons,
   };
 }
