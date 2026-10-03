@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:livekit_client/livekit_client.dart';
 
 import '../app/app_controller.dart';
 import '../app/status_model.dart';
@@ -107,6 +108,37 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
   // --------------------------------------------------------------------------- preview
 
   Widget _preview() {
+    final realtimeTrack = app.realtimePreview.track;
+    if (realtimeTrack != null) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          VideoTrackRenderer(
+            realtimeTrack,
+            fit: VideoViewFit.contain,
+            mirrorMode: app.realtimePreview.facing == 'front'
+                ? VideoViewMirrorMode.mirror
+                : VideoViewMirrorMode.off,
+          ),
+          Positioned(
+            left: 16,
+            bottom: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.green.withValues(alpha: 0.55)),
+              ),
+              child: const Text(
+                'PRE-LIVE · WEBRTC',
+                style: TextStyle(color: AppColors.green, fontWeight: FontWeight.w800, letterSpacing: 1.1),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
     final preview = app.preview;
     if (app.cameraError != null) return _cameraProblem(app.cameraError!);
     if (preview == null) {
