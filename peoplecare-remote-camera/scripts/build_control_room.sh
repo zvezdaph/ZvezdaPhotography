@@ -6,7 +6,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 require_node
 cd "$ROOT/apps/control_room"
-[[ -d node_modules ]] || npm ci --no-audit --no-fund
+if [[ ! -d node_modules/livekit-client ]]; then
+  npm install --no-audit --no-fund
+fi
 info "Typecheck"
 npm run typecheck
 info "Test"
