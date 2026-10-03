@@ -156,7 +156,7 @@ export interface DeviceState {
   protocol: StreamProtocol;
   orientation: "landscape" | "portrait";
   /** Who currently owns the Android camera. "realtime" = LiveKit pre-live preview. */
-  previewMode: "native" | "realtime";
+  previewMode?: "native" | "realtime";
   lastError?: ErrorInfo | null;
 }
 
