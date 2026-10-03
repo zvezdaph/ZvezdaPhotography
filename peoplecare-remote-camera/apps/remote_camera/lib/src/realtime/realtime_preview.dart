@@ -50,7 +50,7 @@ class RealtimePreviewPublisher extends ChangeNotifier {
       final rawError = body['error'];
       final e = rawError is Map ? rawError.cast<String, Object?>() : const <String, Object?>{};
       throw RealtimePreviewException(
-        e['code'] as String? ?? ('http_' + response.statusCode.toString()),
+        e['code'] as String? ?? 'http_${response.statusCode}',
         e['message'] as String? ?? 'Anteprima realtime non disponibile',
       );
     }
@@ -94,7 +94,11 @@ class RealtimePreviewPublisher extends ChangeNotifier {
         params: VideoParametersPresets.h720_169,
       );
       track = await LocalVideoTrack.createCameraTrack(options);
-      await room.localParticipant.publishVideoTrack(track);
+      final participant = room.localParticipant;
+      if (participant == null) {
+        throw const RealtimePreviewException('room_not_ready', 'LiveKit non ha inizializzato il partecipante locale');
+      }
+      await participant.publishVideoTrack(track);
 
       _room = room;
       _track = track;
