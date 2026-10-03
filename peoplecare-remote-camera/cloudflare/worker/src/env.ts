@@ -7,6 +7,7 @@ import type { StudioDurableObject } from "./studio";
  *  - CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN: Stream Live Input API access.
  *  - CONTROL_ROOM_PASSWORD: password of the control room (min 12 chars).
  *  - STREAM_WEBHOOK_SECRET: optional, secret of the Cloudflare Notifications webhook.
+ *  - LIVEKIT_API_KEY / LIVEKIT_API_SECRET: realtime preview room credentials.
  *
  * Variables are documented in docs/CLOUDFLARE_SETUP.md and .env.example.
  */
@@ -19,6 +20,8 @@ export interface Env {
   CLOUDFLARE_API_TOKEN?: string;
   CONTROL_ROOM_PASSWORD?: string;
   STREAM_WEBHOOK_SECRET?: string;
+  LIVEKIT_API_KEY?: string;
+  LIVEKIT_API_SECRET?: string;
 
   APP_NAME?: string;
   ALLOWED_ORIGINS?: string;
@@ -38,6 +41,8 @@ export interface Env {
   CF_WATCHDOG?: string;
   CF_POLL_INTERVAL_SECONDS?: string;
   DO_LOCATION_HINT?: string;
+  LIVEKIT_URL?: string;
+  LIVEKIT_TOKEN_TTL_SECONDS?: string;
   /** Test only: base URL of the Cloudflare API (defaults to https://api.cloudflare.com/client/v4). */
   CLOUDFLARE_API_BASE?: string;
 }
