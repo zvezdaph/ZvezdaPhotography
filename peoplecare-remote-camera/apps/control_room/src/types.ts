@@ -63,6 +63,7 @@ export interface PublicConfig {
   webhookConfigured: boolean;
   customerCodeKnown: boolean;
   watchdog: boolean;
+  realtimePreviewConfigured: boolean;
   maxSlots: number;
 }
 
@@ -71,4 +72,12 @@ export interface PlaybackInfo {
   player: { iframeUrl: string; hlsUrl: string } | null;
   srt: { url: string; streamId: string | null; passphrase: string | null; obsUrl: string | null } | null;
   rtmps: { url: string; streamKey: string | null; obsUrl: string | null } | null;
+}
+
+export interface RealtimePreviewInfo {
+  serverUrl: string;
+  participantToken: string;
+  roomName: string;
+  identity: string;
+  mode: "subscriber";
 }
