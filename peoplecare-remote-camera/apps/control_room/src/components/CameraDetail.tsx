@@ -22,6 +22,7 @@ import type { CameraView, CommandView, EventView, PlaybackInfo } from "../types"
 import { batteryText } from "./CameraTile";
 import { CommandButton, Dot, Metric, Modal, Pill, Section } from "./common";
 import { EventLog } from "./EventLog";
+import { RealtimePreview } from "./RealtimePreview";
 
 const PRESETS = [
   { id: "low", label: "LOW", detail: "720p · 25 fps · 2 Mbps" },
@@ -131,6 +132,7 @@ function Preview(props: { camera: CameraView; controls: ControlAvailability }) {
   const player = camera.playback?.iframeUrl;
   const portrait = camera.state?.orientation === "portrait";
   const live = camera.state?.streamStatus === "live";
+  const realtime = camera.online && camera.state?.previewMode === "realtime";
 
   function onFocusClick(event: MouseEvent) {
     const box = boxRef.current;
@@ -170,11 +172,13 @@ function Preview(props: { camera: CameraView; controls: ControlAvailability }) {
       }
     >
       <div class="preview" ref={boxRef}>
-        {player ? (
+        {realtime ? (
+          <RealtimePreview cameraId={camera.id} />
+        ) : player ? (
           <iframe
             key={player}
             src={player}
-            title={`Anteprima ${camera.name}`}
+            title={`Uscita Cloudflare ${camera.name}`}
             allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
             referrerpolicy="no-referrer"
             loading="lazy"
@@ -183,7 +187,7 @@ function Preview(props: { camera: CameraView; controls: ControlAvailability }) {
           <div class="preview-empty">
             {camera.cloudflare.state === "unconfigured"
               ? "Cloudflare Stream non configurato per questa camera"
-              : "Anteprima disponibile quando Cloudflare ha il customer code (CLOUDFLARE_STREAM_CUSTOMER_CODE) o dopo la prima diretta"}
+              : "Uscita Cloudflare disponibile dopo l'avvio della diretta"}
           </div>
         )}
         {focusMode ? <div class="focus-overlay" onClick={onFocusClick} title="Clicca per mettere a fuoco" /> : null}
@@ -191,8 +195,9 @@ function Preview(props: { camera: CameraView; controls: ControlAvailability }) {
         {live ? <span class="preview-tally">● LIVE</span> : null}
       </div>
       <p class="hint">
-        Anteprima via Cloudflare Stream Player (HLS/LL-HLS, alcuni secondi di ritardo). Il riferimento a latenza minima è OBS con SRT
-        playback.
+        {realtime
+          ? "PRE-LIVE via LiveKit/WebRTC: inquadratura realtime prima dello START. Con START la camera passa al percorso SRT."
+          : "USCITA PROGRAM via Cloudflare Stream. Per la latenza minima della diretta usa OBS con SRT playback."}
       </p>
     </Section>
   );
