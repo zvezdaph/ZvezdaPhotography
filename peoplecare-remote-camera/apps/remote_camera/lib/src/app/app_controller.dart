@@ -654,7 +654,9 @@ class AppController extends ChangeNotifier implements CameraActions {
       await engine.setOrientationLock(constrained.orientation);
     }
     final result = await engine.applySettings(constrained);
-    if (constrained.orientation != previousOrientation) await attachPreview();
+    if (constrained.orientation != previousOrientation && realtimePreview.track == null) {
+      await attachPreview();
+    }
     return {
       ...result,
       'resolution': constrained.resolution,
