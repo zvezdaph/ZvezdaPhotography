@@ -13,6 +13,7 @@ import '../models/engine_state.dart';
 import '../models/video_settings.dart';
 import '../pairing/credentials.dart';
 import '../protocol/protocol.dart';
+import '../realtime/realtime_preview.dart';
 import 'command_executor.dart';
 import 'settings_store.dart';
 import 'status_model.dart';
@@ -46,6 +47,7 @@ class AppController extends ChangeNotifier implements CameraActions {
   final ControlClientFactory _controlFactory;
   final int Function() _clock;
   late final CommandExecutor _executor = CommandExecutor(this);
+  final RealtimePreviewPublisher realtimePreview = RealtimePreviewPublisher();
 
   AppPhase phase = AppPhase.loading;
   StoredCredentials? credentials;
@@ -96,6 +98,7 @@ class AppController extends ChangeNotifier implements CameraActions {
   // ---------------------------------------------------------------------------
 
   Future<void> init() async {
+    realtimePreview.addListener(_onRealtimePreviewChanged);
     preferences = await settingsStore.load();
     credentials = await credentialStore.load();
     testEndpoint = await credentialStore.loadTestEndpoint();
@@ -140,6 +143,7 @@ class AppController extends ChangeNotifier implements CameraActions {
   }
 
   Future<void> _unpair(String? reason) async {
+    await realtimePreview.stop();
     if (engineState.streaming) {
       try {
         await engine.stopStream();
@@ -189,9 +193,10 @@ class AppController extends ChangeNotifier implements CameraActions {
         await _saveVideo(constrained);
         _applyEngineSnapshot(await engine.applySettings(constrained));
       }
-      await attachPreview();
-      await engine.setKeepScreenOn(preferences.keepScreenOn);
       cameraReady = true;
+      final realtimeStarted = await _startRealtimePreview();
+      if (!realtimeStarted) await attachPreview();
+      await engine.setKeepScreenOn(preferences.keepScreenOn);
       _pushState(force: true);
     } on EngineException catch (e) {
       cameraError = e.message;
@@ -200,6 +205,33 @@ class AppController extends ChangeNotifier implements CameraActions {
       _preparing = false;
       notifyListeners();
     }
+  }
+
+  Future<bool> _startRealtimePreview({String? facing}) async {
+    final c = credentials;
+    if (c == null || engineState.streaming || engineState.recording) return false;
+    try {
+      await realtimePreview.start(
+        serverUrl: c.serverUrl,
+        deviceToken: c.deviceToken,
+        initialFacing: facing ?? engineState.facing,
+      );
+      preview = null;
+      logger.info('preview', 'Anteprima realtime LiveKit attiva');
+      return true;
+    } on RealtimePreviewException catch (e) {
+      if (e.code == 'livekit_not_configured') {
+        logger.info('preview', 'LiveKit non configurato: uso anteprima locale');
+      } else {
+        logger.warning('preview', e.message, code: e.code);
+      }
+      return false;
+    }
+  }
+
+  void _onRealtimePreviewChanged() {
+    _pushState(force: true);
+    notifyListeners();
   }
 
   Future<void> attachPreview() async {
@@ -405,11 +437,14 @@ class AppController extends ChangeNotifier implements CameraActions {
 
   Map<String, Object?> protocolState() {
     final s = engineState;
+    final realtime = realtimePreview.status == RealtimePreviewStatus.live ||
+        realtimePreview.status == RealtimePreviewStatus.connecting;
+    final effectiveFacing = realtime ? realtimePreview.facing : s.facing;
     return {
       'cameraStatus': cameraReady ? s.cameraStatus.name : (cameraError != null ? 'error' : 'off'),
       'streamStatus': s.streamStatus.name,
       'paused': s.paused,
-      'facing': s.facing,
+      'facing': effectiveFacing,
       'zoom': s.zoom,
       'torch': s.torch,
       'autofocus': s.autofocus,
@@ -423,6 +458,7 @@ class AppController extends ChangeNotifier implements CameraActions {
       'targetBitrateKbps': s.targetBitrateKbps,
       'protocol': s.protocol,
       'orientation': s.orientation,
+      'previewMode': realtime ? 'realtime' : 'native',
       'lastError': s.lastError == null ? null : {'code': s.lastError!.code, 'message': s.lastError!.message},
     };
   }
@@ -491,36 +527,72 @@ class AppController extends ChangeNotifier implements CameraActions {
       throw EngineException('camera_not_ready', 'Camera non pronta: apri l\'app sul telefono e concedi i permessi');
     }
     if (engineState.streaming) throw EngineException('already_streaming', 'La trasmissione è già attiva');
-    if (usingTestEndpoint) {
-      logger.warning('stream', 'Avvio su ENDPOINT DI TEST (non Cloudflare) richiesto da $source');
-      return engine.startRawStream(testEndpoint!);
+
+    final requestedFacing = realtimePreview.status == RealtimePreviewStatus.live
+        ? realtimePreview.facing
+        : engineState.facing;
+
+    // Camera handoff: PRE-LIVE (LiveKit) -> PROGRAM (RootEncoder/SRT).
+    await realtimePreview.stop();
+    _pushState(force: true);
+
+    try {
+      Map<String, Object?> result;
+      if (usingTestEndpoint) {
+        logger.warning('stream', 'Avvio su ENDPOINT DI TEST (non Cloudflare) richiesto da ' + source);
+        result = await engine.startRawStream(testEndpoint!);
+      } else {
+        var config = streamingConfig;
+        if (config == null && _control?.connected == true) {
+          await refreshConfig();
+          config = streamingConfig;
+        }
+        if (config == null) {
+          throw EngineException(
+            'no_config',
+            configError ?? 'Configurazione Cloudflare non disponibile: collega il telefono alla regia',
+          );
+        }
+        logger.info('stream', 'START (' + config.describeRedacted() + ') richiesto da ' + source);
+        result = await engine.startStream(
+          primary: config.primary,
+          fallback: config.fallback,
+          autoFallback: preferences.autoFallback,
+          srtLatencyMs: config.srtLatencyMs,
+        );
+      }
+
+      if (requestedFacing != engineState.facing) {
+        await engine.switchCamera(requestedFacing);
+      }
+      if (preview == null) await attachPreview();
+      if (preferences.keepScreenOn) await engine.setKeepScreenOn(true);
+      _pushState(force: true);
+      return result;
+    } catch (e) {
+      try {
+        await engine.stopStream();
+      } catch (_) {}
+      try {
+        await detachPreview();
+      } catch (_) {}
+      await _startRealtimePreview(facing: requestedFacing);
+      _pushState(force: true);
+      rethrow;
     }
-    var config = streamingConfig;
-    if (config == null && _control?.connected == true) {
-      await refreshConfig();
-      config = streamingConfig;
-    }
-    if (config == null) {
-      throw EngineException(
-        'no_config',
-        configError ?? 'Configurazione Cloudflare non disponibile: collega il telefono alla regia',
-      );
-    }
-    logger.info('stream', 'START (${config.describeRedacted()}) richiesto da $source');
-    final result = await engine.startStream(
-      primary: config.primary,
-      fallback: config.fallback,
-      autoFallback: preferences.autoFallback,
-      srtLatencyMs: config.srtLatencyMs,
-    );
-    if (preferences.keepScreenOn) await engine.setKeepScreenOn(true);
-    return result;
   }
 
   @override
   Future<void> stopStream({required String source}) async {
-    logger.info('stream', 'STOP richiesto da $source');
+    logger.info('stream', 'STOP richiesto da ' + source);
+    final facing = engineState.facing;
     await engine.stopStream();
+    if (!engineState.recording) {
+      await detachPreview();
+      final realtimeStarted = await _startRealtimePreview(facing: facing);
+      if (!realtimeStarted) await attachPreview();
+    }
+    _pushState(force: true);
   }
 
   @override
@@ -532,7 +604,14 @@ class AppController extends ChangeNotifier implements CameraActions {
   @override
   Future<void> restartStream() => engine.restartStream();
   @override
-  Future<Map<String, Object?>> switchCamera(String facing) => engine.switchCamera(facing);
+  Future<Map<String, Object?>> switchCamera(String facing) async {
+    if (realtimePreview.status == RealtimePreviewStatus.live) {
+      await realtimePreview.switchCamera(facing);
+      _pushState(force: true);
+      return {'facing': facing, 'previewMode': 'realtime'};
+    }
+    return engine.switchCamera(facing);
+  }
   @override
   Future<Map<String, Object?>> setZoom(double zoom) => engine.setZoom(zoom);
   @override
@@ -634,6 +713,7 @@ class AppController extends ChangeNotifier implements CameraActions {
   }
 
   Future<void> shutdownCamera() async {
+    await realtimePreview.stop();
     try {
       await engine.shutdown();
     } catch (_) {}
@@ -651,6 +731,8 @@ class AppController extends ChangeNotifier implements CameraActions {
     _stateDebounce?.cancel();
     unawaited(_events?.cancel());
     unawaited(_control?.stop());
+    realtimePreview.removeListener(_onRealtimePreviewChanged);
+    realtimePreview.dispose();
     super.dispose();
   }
 }
