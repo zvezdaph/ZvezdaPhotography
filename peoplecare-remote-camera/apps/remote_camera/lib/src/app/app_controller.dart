@@ -554,7 +554,7 @@ class AppController extends ChangeNotifier implements CameraActions {
     try {
       Map<String, Object?> result;
       if (usingTestEndpoint) {
-        logger.warning('stream', 'Avvio su ENDPOINT DI TEST (non Cloudflare) richiesto da ' + source);
+        logger.warning('stream', 'Avvio su ENDPOINT DI TEST (non Cloudflare) richiesto da $source');
         result = await engine.startRawStream(testEndpoint!);
       } else {
         var config = streamingConfig;
@@ -568,7 +568,7 @@ class AppController extends ChangeNotifier implements CameraActions {
             configError ?? 'Configurazione Cloudflare non disponibile: collega il telefono alla regia',
           );
         }
-        logger.info('stream', 'START (' + config.describeRedacted() + ') richiesto da ' + source);
+        logger.info('stream', 'START (${config.describeRedacted()}) richiesto da $source');
         result = await engine.startStream(
           primary: config.primary,
           fallback: config.fallback,
@@ -599,7 +599,7 @@ class AppController extends ChangeNotifier implements CameraActions {
 
   @override
   Future<void> stopStream({required String source}) async {
-    logger.info('stream', 'STOP richiesto da ' + source);
+    logger.info('stream', 'STOP richiesto da $source');
     final facing = engineState.facing;
     await engine.stopStream();
     if (!engineState.recording) {
