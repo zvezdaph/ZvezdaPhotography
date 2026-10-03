@@ -10,20 +10,17 @@ Non vengono aperte due capture Android contemporaneamente.
 
 ## Configurazione Worker
 
-In `cloudflare/worker/wrangler.jsonc`:
-
-```json
-"LIVEKIT_URL": "wss://<progetto>.livekit.cloud",
-"LIVEKIT_TOKEN_TTL_SECONDS": "600"
-```
-
-I segreti restano solo nel Worker:
+La configurazione del progetto resta nel Worker. Anche l'URL viene impostato come secret così non serve modificare il sorgente per ogni ambiente:
 
 ```bash
 cd cloudflare/worker
+npx wrangler secret put LIVEKIT_URL
 npx wrangler secret put LIVEKIT_API_KEY
 npx wrangler secret put LIVEKIT_API_SECRET
 ```
+
+`LIVEKIT_URL` deve essere il WebSocket URL del progetto (per esempio `wss://<progetto>.livekit.cloud`).
+La durata token resta configurabile con `LIVEKIT_TOKEN_TTL_SECONDS` (default 600 s).
 
 Poi ricostruire Control Room e ridistribuire:
 
