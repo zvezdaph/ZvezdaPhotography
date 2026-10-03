@@ -6,6 +6,7 @@
   //   npx wrangler secret put CLOUDFLARE_API_TOKEN
   //   npx wrangler secret put CONTROL_ROOM_PASSWORD
   //   npx wrangler secret put STREAM_WEBHOOK_SECRET   (optional)
+  //   npx wrangler secret put LIVEKIT_URL
   //   npx wrangler secret put LIVEKIT_API_KEY
   //   npx wrangler secret put LIVEKIT_API_SECRET
   // For local development put them in .dev.vars (see .dev.vars.example).
@@ -65,7 +66,6 @@
     "DEFAULT_VIDEO_BITRATE_KBPS": "5000",
     "DEFAULT_AUDIO_BITRATE_KBPS": "128",
     "SRT_LATENCY_MS": "500",
-    "LIVEKIT_URL": "",
     "LIVEKIT_TOKEN_TTL_SECONDS": "600",
     "REVOKE_ACTION": "rotate",
     "CF_WATCHDOG": "true",
