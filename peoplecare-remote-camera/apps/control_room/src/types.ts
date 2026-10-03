@@ -63,7 +63,7 @@ export interface PublicConfig {
   webhookConfigured: boolean;
   customerCodeKnown: boolean;
   watchdog: boolean;
-  realtimePreviewConfigured: boolean;
+  realtimePreviewConfigured?: boolean;
   maxSlots: number;
 }
 
