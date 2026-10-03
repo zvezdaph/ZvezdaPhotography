@@ -53,8 +53,9 @@ import {
 } from "./cloudflare/stream";
 import { mapLiveInputStatus, parseLiveWebhook, rawLiveInputStatus } from "./cloudflare/liveStatus";
 import { buildStreamingConfig, checkCommandSupported, isErrorInfo, sanitizeName, streamDefaults } from "./logic";
+import { createLiveKitJoinToken, liveKitConfigured, liveKitServerUrl } from "./livekit";
 
-export const APP_VERSION = "1.0.0";
+export const APP_VERSION = "1.1.0";
 
 const MAX_SLOTS = 16;
 const HEARTBEAT_INTERVAL_MS = 15_000;
@@ -162,6 +163,7 @@ export class StudioDurableObject extends DurableObject<Env> {
     }
     if (path === "/api/pair/start" && method === "POST") return this.pairStart(request);
     if (path === "/api/pair/poll" && method === "POST") return this.pairPoll(request);
+    if (path === "/api/livekit/device-token" && method === "GET") return this.liveKitDeviceToken(request);
     if (path === "/api/webhooks/stream" && method === "POST") return this.streamWebhook(request);
     if (path === "/api/events" && method === "GET") return this.listEvents(request, url);
     if (path === "/api/cameras" && method === "GET") {
@@ -170,12 +172,13 @@ export class StudioDurableObject extends DurableObject<Env> {
     }
     if (path === "/api/cameras/claim" && method === "POST") return this.claimCamera(request);
 
-    const cameraMatch = /^\/api\/cameras\/([A-Za-z0-9_-]{8,64})(\/playback|\/live-input)?$/.exec(path);
+    const cameraMatch = /^\/api\/cameras\/([A-Za-z0-9_-]{8,64})(\/playback|\/live-input|\/realtime-preview)?$/.exec(path);
     if (cameraMatch) {
       const [, cameraId, sub] = cameraMatch;
       if (!sub && method === "PATCH") return this.updateCamera(request, cameraId);
       if (!sub && method === "DELETE") return this.revokeCamera(request, cameraId);
       if (sub === "/playback" && method === "GET") return this.playback(request, cameraId);
+      if (sub === "/realtime-preview" && method === "GET") return this.liveKitControlToken(request, cameraId);
       if (sub === "/live-input" && method === "POST") return this.liveInputAction(request, cameraId);
     }
     throw new HttpError(404, "not_found", "Endpoint non trovato");
@@ -285,6 +288,7 @@ export class StudioDurableObject extends DurableObject<Env> {
       webhookConfigured: Boolean(this.env.STREAM_WEBHOOK_SECRET),
       customerCodeKnown: Boolean(this.customerCode()),
       watchdog: boolVar(this.env.CF_WATCHDOG, true),
+      realtimePreviewConfigured: liveKitConfigured(this.env),
       maxSlots: MAX_SLOTS,
     };
   }
@@ -436,6 +440,69 @@ export class StudioDurableObject extends DurableObject<Env> {
     if (!camera) throw new HttpError(500, "internal_error", "Camera non salvata");
     this.broadcastCamera(camera);
     return json({ ok: true, camera: this.cameraView(camera), warning }, 201);
+  }
+
+  // -------------------------------------------------------------------------
+  // LiveKit realtime preview
+  // -------------------------------------------------------------------------
+
+  private async requireDeviceCamera(request: Request): Promise<CameraRow> {
+    const token = bearerToken(request);
+    if (!token) throw new HttpError(401, "unauthorized", "Token dispositivo mancante");
+    const camera = this.db.cameraByTokenHash(await sha256Hex(token));
+    if (!camera) throw new HttpError(401, "unauthorized", "Token dispositivo non valido o revocato");
+    return camera;
+  }
+
+  private liveKitRoom(cameraId: string): string {
+    return `pcrc-${cameraId}`;
+  }
+
+  private async liveKitDeviceToken(request: Request): Promise<Response> {
+    const camera = await this.requireDeviceCamera(request);
+    if (!liveKitConfigured(this.env)) {
+      throw new HttpError(409, "livekit_not_configured", "Anteprima realtime non configurata");
+    }
+    const token = await createLiveKitJoinToken(this.env, {
+      room: this.liveKitRoom(camera.id),
+      identity: `camera-${camera.id}`,
+      canPublish: true,
+      canSubscribe: false,
+      ttlSeconds: intVar(this.env.LIVEKIT_TOKEN_TTL_SECONDS, 600, 120, 3600),
+    });
+    return json({
+      ok: true,
+      serverUrl: liveKitServerUrl(this.env),
+      participantToken: token,
+      roomName: this.liveKitRoom(camera.id),
+      identity: `camera-${camera.id}`,
+      mode: "publisher",
+    });
+  }
+
+  private async liveKitControlToken(request: Request, cameraId: string): Promise<Response> {
+    const session = await this.requireSession(request);
+    const camera = this.requireCamera(cameraId);
+    if (!liveKitConfigured(this.env)) {
+      throw new HttpError(409, "livekit_not_configured", "Anteprima realtime non configurata");
+    }
+    const identity = `control-${randomId("viewer", 6)}`;
+    const token = await createLiveKitJoinToken(this.env, {
+      room: this.liveKitRoom(camera.id),
+      identity,
+      canPublish: false,
+      canSubscribe: true,
+      ttlSeconds: intVar(this.env.LIVEKIT_TOKEN_TTL_SECONDS, 600, 120, 3600),
+    });
+    this.logEvent(camera.id, "info", "regia", `Anteprima realtime aperta da ${session.operator}`);
+    return json({
+      ok: true,
+      serverUrl: liveKitServerUrl(this.env),
+      participantToken: token,
+      roomName: this.liveKitRoom(camera.id),
+      identity,
+      mode: "subscriber",
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -800,6 +867,7 @@ export class StudioDurableObject extends DurableObject<Env> {
         configured: streamApiConfigured(this.env),
         state: camera.cf_state ?? (streamApiConfigured(this.env) ? "unknown" : "unconfigured"),
       },
+      realtimePreviewConfigured: liveKitConfigured(this.env),
     });
     this.logEvent(camera.id, "info", "device", `Telefono connesso alla regia`);
     const updated = this.db.camera(camera.id);
