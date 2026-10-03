@@ -155,6 +155,8 @@ export interface DeviceState {
   targetBitrateKbps: number;
   protocol: StreamProtocol;
   orientation: "landscape" | "portrait";
+  /** Who currently owns the Android camera. "realtime" = LiveKit pre-live preview. */
+  previewMode: "native" | "realtime";
   lastError?: ErrorInfo | null;
 }
 
@@ -536,6 +538,7 @@ export function sanitizeState(input: unknown): DeviceState | null {
     targetBitrateKbps: num(input.targetBitrateKbps, 0, 0, 50_000),
     protocol: str(input.protocol, ["srt", "rtmps"] as const, "srt"),
     orientation: str(input.orientation, ["landscape", "portrait"] as const, "landscape"),
+    previewMode: str(input.previewMode, ["native", "realtime"] as const, "native"),
     lastError,
   };
 }
