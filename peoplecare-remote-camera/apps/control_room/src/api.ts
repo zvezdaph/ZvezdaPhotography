@@ -1,4 +1,4 @@
-import type { CameraView, EventView, PlaybackInfo, PublicConfig } from "./types";
+import type { CameraView, EventView, PlaybackInfo, PublicConfig, RealtimePreviewInfo } from "./types";
 
 export class ApiError extends Error {
   constructor(
@@ -55,6 +55,8 @@ export const api = {
   revoke: (id: string) =>
     request<{ cloudflareAction: string }>(`/api/cameras/${encodeURIComponent(id)}`, { method: "DELETE" }),
   playback: (id: string) => request<PlaybackInfo>(`/api/cameras/${encodeURIComponent(id)}/playback`),
+  realtimePreview: (id: string) =>
+    request<RealtimePreviewInfo>(`/api/cameras/${encodeURIComponent(id)}/realtime-preview`),
   liveInput: (id: string, action: "create" | "enable" | "disable" | "rotate" | "refresh") =>
     request<{ message: string; camera: CameraView }>(`/api/cameras/${encodeURIComponent(id)}/live-input`, {
       method: "POST",
