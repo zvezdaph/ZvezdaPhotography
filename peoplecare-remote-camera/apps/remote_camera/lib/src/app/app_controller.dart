@@ -73,6 +73,7 @@ class AppController extends ChangeNotifier implements CameraActions {
   bool screenDim = false;
   bool _preparing = false;
   bool _unpairing = false;
+  bool _realtimePreviewConfigured = false;
 
   ControlClient? _control;
   StreamSubscription<Map<String, Object?>>? _events;
@@ -155,6 +156,7 @@ class AppController extends ChangeNotifier implements CameraActions {
     credentials = null;
     streamingConfig = null;
     cloudflareIngest = null;
+    _realtimePreviewConfigured = false;
     controlStatus = LinkState.disconnected;
     revokedMessage = reason;
     phase = AppPhase.unpaired;
@@ -209,7 +211,7 @@ class AppController extends ChangeNotifier implements CameraActions {
 
   Future<bool> _startRealtimePreview({String? facing}) async {
     final c = credentials;
-    if (c == null || engineState.streaming || engineState.recording) return false;
+    if (!_realtimePreviewConfigured || c == null || engineState.streaming || engineState.recording) return false;
     try {
       await realtimePreview.start(
         serverUrl: c.serverUrl,
@@ -227,6 +229,15 @@ class AppController extends ChangeNotifier implements CameraActions {
       }
       return false;
     }
+  }
+
+  Future<void> _activateRealtimePreview() async {
+    if (!cameraReady || engineState.streaming || engineState.recording || realtimePreview.active) return;
+    final hadNativePreview = preview != null;
+    if (hadNativePreview) await detachPreview();
+    final started = await _startRealtimePreview();
+    if (!started && hadNativePreview && preview == null) await attachPreview();
+    _pushState(force: true);
   }
 
   void _onRealtimePreviewChanged() {
@@ -357,6 +368,7 @@ class AppController extends ChangeNotifier implements CameraActions {
     }
     final cloudflare = welcome['cloudflare'];
     if (cloudflare is Map) cloudflareIngest = cloudflare['state'] as String?;
+    _realtimePreviewConfigured = welcome['realtimePreviewConfigured'] == true;
     _control?.send(Outgoing.hello(
       device: {
         'model': '${deviceInfo['manufacturer'] ?? ''} ${deviceInfo['model'] ?? ''}'.trim(),
@@ -370,6 +382,9 @@ class AppController extends ChangeNotifier implements CameraActions {
     _control?.send(Outgoing.configRequest());
     _sendTelemetry();
     _rescheduleTelemetry();
+    if (_realtimePreviewConfigured && cameraReady && !engineState.streaming) {
+      unawaited(_activateRealtimePreview());
+    }
     notifyListeners();
   }
 
