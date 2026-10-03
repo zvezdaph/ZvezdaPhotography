@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import { RemoteTrack, Room, RoomEvent, Track } from "livekit-client";
+import { RemoteTrack, RemoteVideoTrack, Room, RoomEvent, Track } from "livekit-client";
 import type { RemoteParticipant, RemoteTrackPublication } from "livekit-client";
 
 import { api, ApiError } from "../api";
@@ -84,7 +84,7 @@ export function RealtimePreview(props: { cameraId: string }) {
         for (const participant of room.remoteParticipants.values()) {
           const publication = participant.getTrackPublication(Track.Source.Camera);
           const track = publication?.videoTrack;
-          if (track) {
+          if (track instanceof RemoteVideoTrack) {
             attach(track);
             break;
           }
