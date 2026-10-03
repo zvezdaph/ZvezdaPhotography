@@ -300,6 +300,8 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
     final s = app.engineState;
     final caps = app.capabilities.facing(s.facing);
     final ready = app.cameraReady;
+    final realtimePreLive = app.realtimePreview.track != null;
+    final nativeReady = ready && !realtimePreLive;
     final streaming = s.streaming;
     final main = <Widget>[
       if (!streaming)
@@ -333,31 +335,31 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
         icon: s.torch ? Icons.flashlight_on : Icons.flashlight_off,
         label: 'TORCIA',
         active: s.torch,
-        onPressed: ready && caps?.torch == true ? () => _run(() => app.setTorch(!s.torch)) : null,
+        onPressed: nativeReady && caps?.torch == true ? () => _run(() => app.setTorch(!s.torch)) : null,
       ),
       _ToolButton(
         icon: s.audioEnabled ? Icons.mic : Icons.mic_off,
         label: s.audioEnabled ? 'MUTE' : 'UNMUTE',
         active: !s.audioEnabled,
-        onPressed: ready && s.microphoneAvailable ? () => _run(() => app.setAudioEnabled(!s.audioEnabled)) : null,
+        onPressed: nativeReady && s.microphoneAvailable ? () => _run(() => app.setAudioEnabled(!s.audioEnabled)) : null,
       ),
       _ToolButton(
         icon: s.videoEnabled ? Icons.videocam : Icons.videocam_off,
         label: s.videoEnabled ? 'VIDEO ON' : 'VIDEO OFF',
         active: !s.videoEnabled,
-        onPressed: ready ? () => _run(() => app.setVideoEnabled(!s.videoEnabled)) : null,
+        onPressed: nativeReady ? () => _run(() => app.setVideoEnabled(!s.videoEnabled)) : null,
       ),
       _ToolButton(
         icon: Icons.center_focus_strong,
         label: 'AUTOFOCUS',
         active: s.autofocus,
-        onPressed: ready && caps?.autofocus == true ? () => _run(() => app.setAutoFocus(true), success: 'Autofocus continuo') : null,
+        onPressed: nativeReady && caps?.autofocus == true ? () => _run(() => app.setAutoFocus(true), success: 'Autofocus continuo') : null,
       ),
       _ToolButton(
         icon: Icons.fiber_manual_record,
         label: s.recording ? 'BACKUP ON' : 'BACKUP OFF',
         active: s.recording,
-        onPressed: ready && app.capabilities.recording ? () => _toggleRecording() : null,
+        onPressed: nativeReady && app.capabilities.recording ? () => _toggleRecording() : null,
       ),
       _ToolButton(icon: Icons.tune, label: 'IMPOSTA', onPressed: () => showSettingsSheet(context, app)),
       _ToolButton(icon: Icons.brightness_2, label: 'DIM', onPressed: () => _run(() => app.setScreenDim(true))),
@@ -367,7 +369,7 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
         onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => DiagnosticsScreen(app: app))),
       ),
     ];
-    final zoom = caps != null && caps.zoomSupported && ready
+    final zoom = caps != null && caps.zoomSupported && nativeReady
         ? Row(children: [
             const Icon(Icons.zoom_out, size: 18, color: AppColors.muted),
             Expanded(
