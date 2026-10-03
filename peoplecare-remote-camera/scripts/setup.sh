@@ -15,8 +15,8 @@ info "Node.js $(node --version), npm $(npm --version)"
 info "Cloudflare Worker: npm ci"
 (cd "$ROOT/cloudflare/worker" && npm ci --no-audit --no-fund)
 
-info "Control Room: npm ci"
-(cd "$ROOT/apps/control_room" && npm ci --no-audit --no-fund)
+info "Control Room: npm install"
+(cd "$ROOT/apps/control_room" && npm install --no-audit --no-fund)
 
 if [[ "$SKIP_ANDROID" == false ]]; then
   if command -v flutter >/dev/null 2>&1; then
